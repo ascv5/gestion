@@ -1,0 +1,5 @@
+#PRE
+
+class Planete():
+	pass
+
