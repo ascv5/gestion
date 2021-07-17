@@ -6,7 +6,7 @@ pygame.font.init()
 
 #VAR
 screen_w, screen_h = 1200, 600
-relative_x, relative_y, relative_w, relative_h = 0, 0, screen_w, screen_h
+relative_x, relative_y, relative_w, relative_h, zoom = 0, 0, screen_w, screen_h, 1
 objet = {}
 
 
@@ -25,18 +25,20 @@ def add_objet(x, y, w, h, path):
 	objet[ide]["img"] = pygame.transform.scale(img, (w, h))
 
 
-def update_screen(x, y, w, h):
-	global relative_x, relative_y
+def update_screen(x=relative_x, y=relative_y, t_zoom=zoom, w=relative_w, h=relative_h):
+	global relative_x, relative_y, relative_w, relative_h, zoom
+	relative_x, relative_y, relative_w, relative_h, zoom = x, y, w, h, t_zoom
 	print("X : " + str(relative_x) + " Y : " + str(relative_y))
-	relative_x, relative_y = x, y
 	fenetre.fill("black")
+	w, h = w*zoom, h*zoom
 	for a in objet.keys():
-		if x <= objet[a]["x"]+objet[a]["w"] <= x+w and y <= objet[a]["y"]+objet[a]["h"] <= y+h:
+		if (x <= objet[a]["x"] <= x+w or x <= objet[a]["x"]+objet[a]["w"] <= x+w) and (y <= objet[a]["y"]+objet[a]["h"] <= y+h or y <= objet[a]["y"] <= y+h):
 			fenetre.blit(objet[a]["img"], (objet[a]["x"]-x, objet[a]["y"]-y))
 
 
-add_objet(100, 100, 200, 100, "test/2.png")
-add_objet(700, 500, 5, 5, "test/1.jpg")
+add_objet(100, 100, 300, 300, "test/2.png")
+img = pygame.image.load("test/3.png")
+fenetre.blit(img, (0, 0))
 
 
 last_pos = 0, 0
@@ -62,13 +64,13 @@ while run:
 					fenetre.fill("black")
 					fenetre.blit(new, (0, 0))
 				elif event.key == pygame.K_a:
-					update_screen(100, 100, 200)
+					update_screen(t_zoom=2)
 
 			if event.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0] == True:
 				ax = pygame.mouse.get_pos()[0]-last_pos[0]
 				ay = pygame.mouse.get_pos()[1]-last_pos[1]
 				print("aX : " + str(ax) + " aY : " + str(ay))
-				update_screen(relative_x-ax, relative_y-ay, relative_w, relative_h)
+				update_screen(x=relative_x-ax, y=relative_y-ay)
 
 
 	last_pos = pygame.mouse.get_pos()
