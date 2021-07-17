@@ -20,19 +20,20 @@ img2 = pygame.image.load("test/1.jpg")
 def add_objet(x, y, w, h, path):
 	ide = len(objet)
 	objet[ide] = {"x": x, "y": y, "w": w, "h": h}
-	objet[ide]["img"] = pygame.image.load(path)
+	img = pygame.image.load(path)
+	objet[ide]["img"] = pygame.transform.scale(img, (w, h))
 
 
 def update_screen(x, y, size):
 	for a in objet.keys():
-		if x <= objet[a]["x"]+objet[a]["w"] < x+size and y <= objet[a]["y"] <= y+size:
-			fenetre.blit(objet[a]["img"], (objet[a]["x"]-x, 0))
+		if x <= objet[a]["x"]+objet[a]["w"] <= x+size and y <= objet[a]["y"]+objet[a]["h"] <= y+size:
+			fenetre.blit(objet[a]["img"], (objet[a]["x"]-x, objet[a]["y"]-y))
 
-add_objet(100, 100, 50, 50, "test/2.png")
+add_objet(100, 100, 200, 100, "test/2.png")
 add_objet(700, 500, 5, 5, "test/1.jpg")
 
 
-
+last_pos = 0, 0
 run = True
 while run:
 
@@ -55,7 +56,12 @@ while run:
 					fenetre.fill("black")
 					fenetre.blit(new, (0, 0))
 				elif event.key == pygame.K_a:
-					update_screen(125, 50, 300)
+					update_screen(100, 100, 200)
+
+			if event.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0] == True:
+				print("aX : " + str(pygame.mouse.get_pos()[0]-last_pos[0]) + " aY : " + str(pygame.mouse.get_pos()[1]-last_pos[1]))
+
+	last_pos = pygame.mouse.get_pos()
 	pygame.display.update()
 
 pygame.quit()
